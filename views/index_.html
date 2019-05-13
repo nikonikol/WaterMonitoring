@@ -1,0 +1,22 @@
+{{extend '../views/Layout.html'}}
+
+{{block 'content'}}
+            <div id="mymap"></div>
+
+            <div id="mymap1"></div>
+
+            <script>
+                getdata()
+                 function getdata() {
+                     $.ajax({
+                         url: '/yibiao',
+                         type: 'get',
+                         success: function (res) {
+                             $('#mymap').html($(res))
+                             $('#mymap1').html()
+                         }
+                     });
+                 }
+             </script>
+{{/block}}
+

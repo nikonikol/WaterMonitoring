@@ -1,0 +1,436 @@
+{{extend '../views/Layout.html'}}
+
+{{block 'content'}}
+    
+<div class="container" >
+    <script src="/node_modules/bootstrap/dist/css/bootstrap.css"></script>
+    <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">数据查询与统计</div>
+            <div class="panel-body">
+                    <p>根据最值来查询历史数据关于历史数据的平均数，标准差，等的计算</p>
+                    <form id="analy_form" class="form-inline">
+                            <h1 class="page-header">根据时间查询</h1>
+                            <div >
+                                    <div class="form-group">
+                                            <label name="min">起始时间</label>
+                                            <input name="min_time" type="date" class="form-control" id="min" placeholder="0">
+                                          </div>
+                                          <div class="form-group">
+                                            <label name="max">终止时间</label>
+                                            <input name="max_time" type="date" class="form-control" id="max" placeholder="100">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">查询</button>
+                            </div>
+                    
+                            
+                    </form>
+            </div>
+          
+            <!-- Table -->
+            
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+
+                        <th>平均数</th>
+
+                        <th>最大值</th>
+
+                        <th>最小值</th>
+
+                        <th>标准差</th>
+
+                        <th>中位数</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td >数据统计</td>
+                        <td id='num1'></td>
+                        <td id='num2'></td>
+                        <td id='num3'></td>
+                        <td id='num4'></td>
+                        <td id='num5'></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+    </div>
+
+</div>
+    <div id="container" style="height: 600px"></div>
+    
+  <script>
+      var dearr
+      var daarr
+
+    $('#analy_form').on('submit', function (e) {
+      e.preventDefault()
+      var formData = $(this).serialize()
+      $.ajax({
+        url: '/dataanaly_time',
+        type: 'post',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+            dearr=data.mydatetime
+            daarr=data.mydata
+            cal=data.calreason
+            $('#num1').text(cal.mean)
+            $('#num2').text(cal.max)
+            $('#num3').text(cal.min)
+            $('#num4').text(cal.staddev)
+            $('#num5').text(cal.mid)
+            var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+
+        option = null;
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                position: function (pt) {
+                    return [pt[0], '10%'];
+                }
+            },
+            title: {
+                left: 'center',
+                text: '历史数据图',
+            },
+            toolbox: {
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: dearr
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%']
+            },
+            dataZoom: [{
+                type: 'inside',
+                start: 0,
+                end: 10
+            }, {
+                start: 0,
+                end: 10,
+                handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                handleSize: '80%',
+                handleStyle: {
+                    color: '#fff',
+                    shadowBlur: 3,
+                    shadowColor: 'rgba(0, 0, 0, 0.6)',
+                    shadowOffsetX: 2,
+                    shadowOffsetY: 2
+                }
+            }],
+            series: [{
+                name: '模拟数据',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                sampling: 'average',
+                itemStyle: {
+                    color: 'rgb(255, 70, 131)'
+                },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgb(255, 158, 68)'
+                    }, {
+                        offset: 1,
+                        color: 'rgb(255, 70, 131)'
+                    }])
+                },
+                data: daarr
+            }]
+        };;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+        }
+      })
+    })
+  </script>
+</body>
+</html>
+{{/block}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+app.title = '水印 - ECharts 下载统计'
+
+var builderJson = {
+  "all": 10887,
+  "charts": {
+    "2019.01.01": 3237,
+    "01.02": 2164,
+    "01.03": 7561,
+    "01.04": 7778,
+    "01.05": 7355,
+    "01.06": 2405,
+    "01.07": 1842,
+    "01.08": 2090,
+    "01.09": 1762,
+    "01.10": 1593,
+    "01.11": 2060,
+    "01.12": 1537,
+  
+  },
+  "components": {
+    "2019.01.01": 2788,
+    "01.02": 9575,
+    "01.03": 9400,
+    "01.04": 9466,
+    "01.05": 9266,
+    "01.06": 3419,
+    "01.07": 2984,
+    "01.08": 2739,
+    "01.09": 2744,
+    "01.10": 2466,
+    "01.11": 3034,
+    "01.12": 1945
+  },
+  "ie": 9743
+};
+
+var downloadJson = {
+  "Ca.js": 17365,
+  "Na.js": 4079,
+  "Mg.js": 6929,
+  "N.js": 14890
+};
+
+var themeJson = {
+  "Hg.js": 1594,
+  "Ag.js": 925,
+  "Mn.js": 1608,
+  "Mo.js": 721,
+  "Go.js": 2179,
+  "Cu.js": 1982
+};
+
+var waterMarkText = 'ECHARTS';
+
+var canvas = document.createElement('canvas');
+var ctx = canvas.getContext('2d');
+canvas.width = canvas.height = 100;
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.globalAlpha = 0.08;
+ctx.font = '20px Microsoft Yahei';
+ctx.translate(50, 50);
+ctx.rotate(-Math.PI / 4);
+ctx.fillText(waterMarkText, 0, 0);
+
+option = {
+    backgroundColor: {
+        type: 'pattern',
+        image: canvas,
+        repeat: 'repeat'
+    },
+    tooltip: {},
+    title: [{
+        text: 'Ca 离子含量',
+        subtext: '总计 ' + builderJson.all+' cc',
+        x: '25%',
+        textAlign: 'center'
+    }, {
+        text: '离子百分比',
+        subtext: '总计 ' + Object.keys(downloadJson).reduce(function (all, key) {
+            return all + downloadJson[key];
+        }, 0)+ ' cc',
+        x: '75%',
+        textAlign: 'center'
+    },{
+        text: 'Na 离子含量',
+        subtext: '总计 ' + Object.keys(downloadJson).reduce(function (all, key) {
+            return all + downloadJson[key];
+        }, 0)+' cc',
+        x: '25%',
+        y: '50%',
+        textAlign: 'center'
+    }, {
+        text: '其他成分',
+        subtext: '总计 ' + Object.keys(themeJson).reduce(function (all, key) {
+            return all + themeJson[key];
+        }, 0)+' cc',
+        x: '75%',
+        y: '50%',
+        textAlign: 'center'
+    }],
+    grid: [{
+        top: 50,
+        width: '50%',
+        bottom: '55%',
+        left: 10,
+        containLabel: true
+    }, {
+        top: '60%',
+        width: '50%',
+        bottom: 0,
+        left: 10,
+        containLabel: true
+    }],
+    xAxis: [{
+        type: 'value',
+        max: builderJson.all,
+        splitLine: {
+            show: false
+        }
+    }, {
+        type: 'value',
+        max: builderJson.all,
+        gridIndex: 1,
+        splitLine: {
+            show: false
+        }
+    }],
+    yAxis: [{
+        type: 'category',
+        data: Object.keys(builderJson.charts),
+        axisLabel: {
+            interval: 0,
+            rotate: 30
+        },
+        splitLine: {
+            show: false
+        }
+    }, {
+        gridIndex: 1,
+        type: 'category',
+        data: Object.keys(builderJson.components),
+        axisLabel: {
+            interval: 0,
+            rotate: 30
+        },
+        splitLine: {
+            show: false
+        }
+    }],
+    series: [{
+        type: 'bar',
+        stack: 'chart',
+        z: 3,
+        label: {
+            normal: {
+                position: 'right',
+                show: true
+            }
+        },
+        data: Object.keys(builderJson.charts).map(function (key) {
+            return builderJson.charts[key];
+        })
+    }, {
+        type: 'bar',
+        stack: 'chart',
+        silent: true,
+        itemStyle: {
+            normal: {
+                color: '#eee'
+            }
+        },
+        data: Object.keys(builderJson.charts).map(function (key) {
+            return builderJson.all - builderJson.charts[key];
+        })
+    }, {
+        type: 'bar',
+        stack: 'component',
+        xAxisIndex: 1,
+        yAxisIndex: 1,
+        z: 3,
+        label: {
+            normal: {
+                position: 'right',
+                show: true
+            }
+        },
+        data: Object.keys(builderJson.components).map(function (key) {
+            return builderJson.components[key];
+        })
+    }, {
+        type: 'bar',
+        stack: 'component',
+        silent: true,
+        xAxisIndex: 1,
+        yAxisIndex: 1,
+        itemStyle: {
+            normal: {
+                color: '#eee'
+            }
+        },
+        data: Object.keys(builderJson.components).map(function (key) {
+            return builderJson.all - builderJson.components[key];
+        })
+    }, {
+        type: 'pie',
+        radius: [0, '30%'],
+        center: ['75%', '25%'],
+        data: Object.keys(downloadJson).map(function (key) {
+            return {
+                name: key.replace('.js', ''),
+                value: downloadJson[key]
+            }
+        })
+    }, {
+        type: 'pie',
+        radius: [0, '30%'],
+        center: ['75%', '75%'],
+        data: Object.keys(themeJson).map(function (key) {
+            return {
+                name: key.replace('.js', ''),
+                value: themeJson[key]
+            }
+        })
+    }]
+};
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+       </script>
+   </body>
+</html> -->

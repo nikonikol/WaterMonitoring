@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+</head>
+
+<body >
+    <div class="container">
+            <div class="row">
+                <div class="col-md-offset-4">
+                        <h1 class="page-header">水质在线实时监测仪表盘展示</h1>	
+                </div>
+                    
+                    <div id="container" class=" col-md-5" style="height:400px">
+
+                    </div>
+                    <div id="container1" class="col-md-offset-1 col-md-5" style="height:400px"></div>                
+            </div>
+            <div class="row">
+                    
+                        
+                        <div id="cont1" class=" col-md-5" style="">
+                                <div class="form-group">
+                                        <label for="name">传感器名称</label>
+                                        <input type="text" class="form-control" id="" placeholder="Name" value="温度传感器">
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="gender">温度（°C）</label>
+                                        <input type="text" class="form-control" id="tem" placeholder="33" value="" >
+                                      </div>
+                        </div>
+                        <div id="cont2" class="col-md-offset-1 col-md-5" style="">
+                                <div class="form-group">
+                                        <label for="name">传感器名称</label>
+                                        <input type="text" class="form-control" id="" placeholder="Name" value="湿度传感器">
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="gender">湿度（°C）</label>
+                                        <input type="text" class="form-control" id="hum" placeholder="33" >
+                                      </div>
+                        </div>                
+                </div>
+            <!-- <div class="row">
+                    <div id="container2" class="col-md-6" style="height:400px"></div>
+                    <div id="container3" class="col-md-6" style="height:400px"></div>                  
+            </div> -->
+           
+            <script src="/public/plugins/jQuery/jquery-2.2.3.min.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+            <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ve0GVXRoiTXQax3zTOZdmi4NXXmdFbSv"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+            <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+            <script type="text/javascript">
+                var daarr = new Array()
+                var daarr1 = new Array()
+                var daarr2 = new Array()
+                var daarr3 = new Array()
+
+                var dom = document.getElementById("container");
+                var myChart = echarts.init(dom);
+                var app = {};
+                option = null;
+                option = {
+                    tooltip: {
+                        formatter: "{a} <br/>{b} : {c}%"
+                    },
+                    toolbox: {
+                        feature: {
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    series: [{
+                        name: '离子浓度',
+                        type: 'gauge',
+                        detail: {
+                            formatter: '温度'
+                        },
+                        data: '0'
+        
+                    }]
+                };
+        
+                setInterval(function () {
+                    myChart.setOption({
+                        series: [{
+                            name: '成交',
+                            data:daarr1
+                        }]
+                    });
+                }, 1000);;
+        
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+        
+                function getdata1() {
+                    $.ajax({
+                        url: '/yibiao',
+                        type: 'post',
+                        dataType: 'JSON',
+                        success: function (data) {
+                            daarr1[0] = data.mydatatem[0]
+                            $("#tem").val(daarr1[0])
+                        }
+                    });
+                }
+                setInterval("getdata1()", 1000)
+            </script>
+             <script type="text/javascript">
+                var daarr = new Array()
+                var dom1 = document.getElementById("container1");
+                var myChart1 = echarts.init(dom1);
+                var app = {};
+                option1 = null;
+                option1 = {
+                    tooltip: {
+                        formatter: "{a} <br/>{b} : {c}%"
+                    },
+                    toolbox: {
+                        feature: {
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    series: [{
+                        name: '离子浓度',
+                        type: 'gauge',
+                        detail: {
+                            formatter: '湿度'
+                        },
+                        data: '0'
+        
+                    }]
+                };
+        
+                setInterval(function () {
+                    myChart1.setOption({
+                        series: [{
+                            name: '成交',
+                            data:daarr2
+                        }]
+                    });
+                }, 1000);;
+        
+                if (option1 && typeof option1 === "object") {
+                    myChart1.setOption(option1, true);
+                }
+        
+                function getdata2() {
+                    $.ajax({
+                        url: '/yibiao',
+                        type: 'post',
+                        dataType: 'JSON',
+                        success: function (data1) {
+                            daarr2[0] = data1.mydatahum[0]
+                          
+                            $("#hum").val(daarr2[0])
+                        }
+                    });
+                }
+                setInterval("getdata2()", 1000)
+            </script>
+            <!-- <script type="text/javascript">
+                var daarr = new Array()
+                var dom2 = document.getElementById("container2");
+                var myChart2 = echarts.init(dom2);
+                var app = {};
+                option2 = null;
+                option2 = {
+                    tooltip: {
+                        formatter: "{a} <br/>{b} : {c}%"
+                    },
+                    toolbox: {
+                        feature: {
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    series: [{
+                        name: '离子浓度',
+                        type: 'gauge',
+                        detail: {
+                            formatter: 'value'
+                        },
+                        data: '0'
+        
+                    }]
+                };
+        
+                setInterval(function () {
+                    myChart2.setOption({
+                        series: [{
+                            name: '成交',
+                            data:daarr3
+                        }]
+                    });
+                }, 10000);;
+        
+                if (option2 && typeof option2 === "object") {
+                    myChart2.setOption(option2, true);
+                }
+        
+                function getdata3() {
+                    $.ajax({
+                        
+                        url: '/yibiao',
+                        type: 'post',
+                        dataType: 'JSON',
+                        success: function (data) {
+                            daarr3[0] = data.mydata[0]
+                        }
+                    });
+                }
+                setInterval("getdata3()", 1000)
+            </script>
+            <script type="text/javascript">
+                var daarr = new Array()
+                var dom3 = document.getElementById("container3");
+                var myChart3 = echarts.init(dom3);
+                var app = {};
+                option3 = null;
+                option3 = {
+                    tooltip: {
+                        formatter: "{a} <br/>{b} : {c}%"
+                    },
+                    toolbox: {
+                        feature: {
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    series: [{
+                        name: '离子浓度',
+                        type: 'gauge',
+                        detail: {
+                            formatter: 'value'
+                        },
+                        data: '0'
+        
+                    }]
+                };
+        
+                setInterval(function () {
+                    myChart3.setOption({
+                        series: [{
+                            name: '成交',
+                            data:daarr
+                        }]
+                    });
+                }, 10000);;
+        
+                if (option3 && typeof option3 === "object") {
+                    myChart3.setOption(option3, true);
+                }
+        
+                function getdata() {
+                    var mydata
+                    $.ajax({
+                        url: '/yibiao',
+                        type: 'post',
+                        dataType: 'JSON',
+                        success: function (data) {
+                            daarr[0] = data.mydata[0]
+                        }
+                    });
+                }
+                setInterval("getdata()", 1000)
+            </script>   -->
+    </div>
+    
+</body>
+
+</html>

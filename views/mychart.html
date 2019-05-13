@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<script src="./public/js/highcharts.js"></script>
+	<title>水质在线监测</title>
+</head>
+
+<body>
+	<h1></h1>
+	<div id="content" style="max-width:800px;height:400px"></div>
+	<!-- Main content -->
+	<!-- jQuery 2.2.3 -->
+	<script src="/public/plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+	<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+	<script>
+		dearr=null
+		daarr=null
+		var dom = document.getElementById("content");
+		var myChart = echarts.init(dom);
+		var app = {};
+		option = null;
+		var base = +new Date(2018, 7, 3);
+		var oneDay = 24 * 3600 * 1000;
+		var date = [];
+
+		var data = [Math.random() * 150];
+		var now = new Date(base);
+
+		function addData(shift) {
+			now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');
+			date.push(now);
+			data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
+
+			if (shift) {
+				date.shift();
+				data.shift();
+			}
+
+			now = new Date(+new Date(now) + oneDay);
+		}
+
+		for (var i = 1; i < 100; i++) {
+			addData();
+		}
+
+		option = {
+			title: {
+				text: '监测点A'
+			},
+			xAxis: {
+				type: 'category',
+				boundaryGap: false,
+				data: dearr
+			},
+			yAxis: {
+				boundaryGap: [0, '50%'],
+				type: 'value'
+			},
+			series: [{
+				name: '成交',
+				type: 'line',
+				smooth: true,
+				symbol: 'none',
+				stack: 'a',
+				areaStyle: {
+					normal: {}
+				},
+				data: daarr
+			}]
+		};
+
+		setInterval(function () {
+			addData(true);
+			myChart.setOption({
+				xAxis: {
+					data: dearr
+				},
+				series: [{
+					name: '成交',
+					data: daarr
+				}]
+			});
+		}, 500);;
+		if (option && typeof option === "object") {
+			myChart.setOption(option, true);
+		}
+		function getdata() {
+			//alert('加载loading...')
+			var mydata
+			$.ajax({
+				url: '/getchart',
+				type: 'post',
+				dataType: 'JSON',
+				success: function (data) {
+					dearr=data.mydatetime
+					daarr=data.mydata
+				}
+			});
+		}
+		setInterval("getdata()", 1000)
+		// //获取数据
+		// var data = "{{mongodbdata}}"
+		// data = data.substring(1, data.length - 1)
+		// data = data.split('data&#34;:')
+		// var daarr = []
+		// for (var i = 1; i < data.length; i++) {
+		// 	var da = data[i].split(',')
+		// 	daarr.push(da[0])
+		// }
+		// //获取时间
+		// var datatime = "{{mongodbdata}}"
+		// datatime = datatime.substring(1, datatime.length - 1)
+		// var datatime = datatime.split('datatime')
+		// var dearr = []
+		// for (var i = 1; i < datatime.length; i++) {
+		// 	var de = datatime[i].split('&#34;')
+		// 	dearr.push(de[2])
+		// }
+
+
+		
+	</script>
+</body>
+
+</html>

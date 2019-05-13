@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body style="height: 100%; margin: 0">
+    <div id="container" style="height: 100%"></div>
+    <script src="/public/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=XSF12HHH4nUf8XBQYl35OD56EhGtQNDd"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+    <script type="text/javascript">
+    var mydatatime,mydatatem,mydatahum=null
+        function getdata() {
+            $.ajax({
+                url: '/chartsdisplay',
+                type: 'post',
+                dataType: 'JSON',
+                success: function (data) {
+                    mydatatime = data.mydatetime
+                    mydatatem = data.mydatatem
+                    mydatahum =data.mydatahum
+                }
+            });
+        }
+        setInterval("getdata()", 1000)
+
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = null;
+        app.title = '折柱混合';
+
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            // toolbox: {
+            //     feature: {
+            //         dataView: {
+            //             show: true,
+            //             readOnly: false
+            //         },
+            //         magicType: {
+            //             show: true,
+            //             type: ['line', 'bar']
+            //         },
+            //         restore: {
+            //             show: true
+            //         },
+            //         saveAsImage: {
+            //             show: true
+            //         }
+            //     }
+            // },
+            legend: {
+                data: ['传感器A(温度)','传感器B(温度)','传感器C(温度)','传感器D(温度)','传感器A(流速)','传感器B(流速)','传感器C(流速)','传感器D(流速)']
+            },
+            xAxis: [{
+                type: 'category',
+                data: mydatatime,
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }],
+            yAxis: [{
+                    type: 'value',
+                    name: '温度',
+                    min: 0,
+                    max: 130,
+                    interval: 20,
+                    axisLabel: {
+                        formatter: '{value} °C'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '流速',
+                    min: 0,
+                    max: 150,
+                    interval: 20,
+                    axisLabel: {
+                        formatter: '{value} m/s'
+                    }
+                }
+            ],
+            series: [{
+                    name: '温度',
+                    type: 'bar',
+                    data: mydatatem
+                }
+                ,
+                {
+                    name: '流速',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: mydatahum
+                }
+            ]
+        };;
+        setInterval(function () {
+			myChart.setOption({
+				xAxis: [{
+                type: 'category',
+                data: mydatatime,
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }],
+                series: [{
+                    name: '传感器A(温度)',
+                    type: 'bar',
+                    data: mydatatem
+                }
+                ,
+                {
+                    name: '传感器B(温度)',
+                    type: 'bar',
+                    data: mydatatem
+                }
+                ,
+                {
+                    name: '传感器C(温度)',
+                    type: 'bar',
+                    data: mydatatem
+                }
+                ,
+                {
+                    name: '传感器D(温度)',
+                    type: 'bar',
+                    data: mydatatem
+                }
+                ,
+                {
+                    name: '传感器A(流速)',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: mydatahum
+                }
+                ,
+                {
+                    name: '传感器B(流速)',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: mydatahum
+                }
+                ,
+                {
+                    name: '传感器C(流速)',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: mydatahum
+                }
+                ,
+                {
+                    name: '传感器D(流速)',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: mydatahum
+                }
+            ]
+			});
+		}, 500);;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    </script>
+</body>
+
+</html>

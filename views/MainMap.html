@@ -1,0 +1,274 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+	#allmap{height:100%;width:100%;}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=iqbzySNaxLTLDlYh8tU4kbmVd8nNLVkW"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
+   	<title>在线监测地图</title>
+</head>
+<body>
+	<div id="allmap"></div>
+
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+	var point = new BMap.Point(103.938991,33.05273);
+	map.centerAndZoom(point, 18);   
+        map.enableScrollWheelZoom();    //启用滚轮放大缩小，默认禁用
+    map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+
+	/*//地址逆解析
+	,
+		{
+			text:'点选地址查询',
+			callback:function(){address()}
+		}
+		
+		
+	function address (){
+		var geoc = new BMap.Geocoder(); 
+	map.addEventListener("click", function(e){        
+		var pt = e.point;
+		geoc.getLocation(pt, function(rs){
+			var addComp = rs.addressComponents;
+			alert(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
+		});        
+	});
+	}
+	*/
+//驾车路线
+
+
+//地图右键菜单
+var menu = new BMap.ContextMenu();
+var myDis = new BMapLib.DistanceTool(map);
+	var txtMenuItem = [
+		{
+			text:'放大',
+			callback:function(){map.zoomIn()}
+		},
+		{
+			text:'缩小',
+			callback:function(){map.zoomOut()}
+		},
+		{
+			text:'量测',
+			callback:function(){myDis.open()}//myDis.close();  //关闭鼠标测距大
+		}
+		,
+		{
+			text:'回到五彩池',
+			callback:function(){map.centerAndZoom(point, 18)}//myDis.close();  //关闭鼠标测距大
+		}
+	];
+	for(var i=0; i < txtMenuItem.length; i++){
+		menu.addItem(new BMap.MenuItem(txtMenuItem[i].text,txtMenuItem[i].callback,100));
+	}
+	map.addContextMenu(menu);
+	
+	
+    /*
+    // 向地图添加5个标注
+    var pt = null;
+    var markers = [];
+    var point1 = new BMap.Point(103.938807,33.053313);
+    var point2 =new BMap.Point(103.939188,33.052897);
+    var point3 =new BMap.Point(103.939265,33.052186);
+    var point4 =new BMap.Point(103.938708,33.052212);
+    var point5 = new BMap.Point(103.938748, 33.052583);
+    var marker1 = new BMap.Marker(point1);
+    var marker2 = new BMap.Marker(point2);
+    var marker3 = new BMap.Marker(point3);
+    var marker4 = new BMap.Marker(point4);
+    var marker5 = new BMap.Marker(point5);
+   /*for (var i = 1; i <= 5; i++) {
+        pt = new BMap.Point(point + i);
+	   markers.push(new BMap.Marker(pt));
+    }
+    jump(marker1);
+    jump(marker2);
+    jump(marker3);
+    jump(marker4);
+    jump(marker5);
+	
+    function jump(marker) {
+        
+	  map.addOverlay(marker);       
+    marker.setAnimation(BMAP_ANIMATION_BOUNCE)//跳动的动画
+    }
+    
+	
+    
+    marker1.addEventListener("click", getAttr);
+    marker2.addEventListener("click", getAttr);
+    marker3.addEventListener("click", getAttr);
+    marker4.addEventListener("click", getAttr);
+     marker5.addEventListener("click",getAttr);
+
+    */
+    function getAttr(marker){
+		var p = marker.getPosition();       //获取marker的位置
+		alert("传感器的位置是" + p.lng + "," + p.lat);   
+    }
+
+
+
+
+
+
+
+
+	  // 添加带有定位的导航控件
+  var navigationControl = new BMap.NavigationControl({
+    // 靠左上角位置
+    anchor: BMAP_ANCHOR_TOP_LEFT,
+    // LARGE类型
+    type: BMAP_NAVIGATION_CONTROL_LARGE,
+    // 启用显示定位
+    enableGeolocation: true
+  });
+  map.addControl(navigationControl);
+  // 添加定位控件
+  var geolocationControl = new BMap.GeolocationControl();
+  geolocationControl.addEventListener("locationSuccess", function(e){
+    // 定位成功事件
+    var address = '';
+    address += e.addressComponent.province;
+    address += e.addressComponent.city;
+    address += e.addressComponent.district;
+    address += e.addressComponent.street;
+    address += e.addressComponent.streetNumber;
+    alert("当前定位地址为：" + address);
+  });
+  geolocationControl.addEventListener("locationError",function(e){
+    // 定位失败事件
+    alert(e.message);
+  });
+    map.addControl(geolocationControl);
+
+
+
+
+
+
+
+    
+
+    // 复杂的自定义覆盖物
+    function ComplexCustomOverlay(point, text, mouseoverText){
+      this._point = point;
+      this._text = text;
+      this._overText = mouseoverText;
+    }
+    ComplexCustomOverlay.prototype = new BMap.Overlay();
+    ComplexCustomOverlay.prototype.initialize = function(mp){
+      this._mp = mp;
+      var div = this._div = document.createElement("div");
+      div.style.position = "absolute";
+      div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat);
+      div.style.backgroundColor = "#EE5D5B";
+      div.style.border = "1px solid #BC3B3A";
+      div.style.color = "white";
+      div.style.height = "18px";
+      div.style.padding = "2px";
+      div.style.lineHeight = "18px";
+      div.style.whiteSpace = "nowrap";
+      div.style.MozUserSelect = "none";
+      div.style.fontSize = "12px"
+      var span = this._span = document.createElement("span");
+      div.appendChild(span);
+      span.appendChild(document.createTextNode(this._text));      
+      var that = this;
+
+      var arrow = this._arrow = document.createElement("div");
+      arrow.style.background = "url(http://map.baidu.com/fwmap/upload/r/map/fwmap/static/house/images/label.png) no-repeat";
+      arrow.style.position = "absolute";
+      arrow.style.width = "11px";
+      arrow.style.height = "10px";
+      arrow.style.top = "22px";
+      arrow.style.left = "10px";
+      arrow.style.overflow = "hidden";
+      div.appendChild(arrow);
+     
+      div.onmouseover = function(){
+        this.style.backgroundColor = "#6BADCA";
+        this.style.borderColor = "#0000ff";
+        this.getElementsByTagName("span")[0].innerHTML = that._overText;
+        arrow.style.backgroundPosition = "0px -20px";
+      }
+
+      div.onmouseout = function(){
+        this.style.backgroundColor = "#EE5D5B";
+        this.style.borderColor = "#BC3B3A";
+        this.getElementsByTagName("span")[0].innerHTML = that._text;
+        arrow.style.backgroundPosition = "0px 0px";
+      }
+
+      map.getPanes().labelPane.appendChild(div);
+      
+      return div;
+    }
+    ComplexCustomOverlay.prototype.draw = function(){
+      var mp = this._mp;
+      var pixel = mp.pointToOverlayPixel(this._point);
+      this._div.style.left = pixel.x - parseInt(this._arrow.style.left) + "px";
+      this._div.style.top  = pixel.y - 30 + "px";
+    }
+    var txt = "监控点A", mouseoverTxt = txt + " " + parseInt(Math.random() * 1000,10) + "cc 钙离子值超出范围" ;
+        
+    var myCompOverlay = new ComplexCustomOverlay(new BMap.Point(103.938807,33.053313), "监控点A",mouseoverTxt);
+
+    map.addOverlay(myCompOverlay);
+    
+
+    var data_info = [[103.938807,33.053313,"传感器：Ca离子传感器"],
+					 [103.939188,33.052897,"传感器：PH值离子传感器"],
+        [103.939265, 33.052186, "传感器：Na离子传感器"],
+        [103.938708,33.052212, "传感器：N离子传感器"],
+        [103.938748, 33.052583, "传感器：Cl离子传感器"]
+          ];
+          
+	var opts = {
+				width : 250,     // 信息窗口宽度
+				height: 80,     // 信息窗口高度
+				title : "信息窗口" , // 信息窗口标题
+				enableMessage:true//设置允许信息窗发送短息
+			   };
+	for(var i=0;i<data_info.length;i++){
+		var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]));  // 创建标注
+		var content = data_info[i][2];
+        map.addOverlay(marker);               // 将标注添加到地图中
+          marker.setAnimation(BMAP_ANIMATION_BOUNCE)//跳动的动画
+
+		addClickHandler(content,marker);
+	}
+	function addClickHandler(content,marker){
+		marker.addEventListener("click",function(e){
+            openInfo(content, e);//网页x窗体
+            getAttr(marker);    //  alert弹出
+        }
+		);
+	}
+	function openInfo(content,e){
+		var p = e.target;
+		var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+		var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象 
+		map.openInfoWindow(infoWindow,point); //开启信息窗口
+    }
+    var markerClusterer = new BMapLib.MarkerClusterer(map, { markers: markers });
+
+
+
+
+	 
+</script>
+	

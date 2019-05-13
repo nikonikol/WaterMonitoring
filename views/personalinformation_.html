@@ -1,0 +1,27 @@
+{{extend '../views/Layout.html'}}
+
+{{block 'content'}}
+<div class="container" >
+  <h1>修改个人信息</h1>
+    <form>
+            <div class="form-group">
+              <label for="name">nickname</label>
+              <input type="text" class="form-control" id="name" placeholder="Name" value="{{Userinformation.username}}">
+            </div>
+            <div class="form-group">
+              <label for="gender">gender</label>
+              <input type="text" class="form-control" id="gender" placeholder="Gender" value="{{Userinformation.gender}}" >
+            </div>
+            <div class="form-group">
+              <label for="age">age</label>
+              <input type="number" class="form-control" id="age" placeholder="Age" value="{{Userinformation.age}}">
+            </div>
+            <div class="form-group">
+              <label for="phone">phone</label>
+              <input type="number" class="form-control" id="phone" placeholder="Phone" value="{{Userinformation.phones}}">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+</div>
+{{/block}}
+

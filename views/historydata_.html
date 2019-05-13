@@ -1,0 +1,67 @@
+{{extend '../views/Layout.html'}}
+
+{{block 'content'}}
+<link rel="stylesheet" href="../node_modules/bootstrap-table/dist/bootstrap-table.css">
+<script src="../node_modules/bootstrap-table/dist/bootstrap-table.js"></script>
+<script src="../node_modules/bootstrap-table/dist/bootstrap-table-locale-all.js"></script>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+        <h1 class="page-header">History data</h1>
+      
+        
+    
+        
+        <!-- <ul class="pagination ">
+          <li><a href="#">&laquo;</a></li>
+          <li><a href="#">1</a></li>
+          <li><a href="#">2</a></li>
+          <li><a href="#">3</a></li>
+          <li><a href="#">4</a></li>
+          <li><a href="#">5</a></li>
+          <li><a href="#">1</a></li>
+          <li><a href="#">2</a></li>
+          <li><a href="#">3</a></li>
+          <li><a href="#">4</a></li>
+          <li><a href="#">5</a></li>
+          <li><a href="#">&raquo;</a></li>
+      </ul> -->
+        <!-- <div class="row placeholders">
+           {{each imgs}}
+          <div class="col-xs-6 col-sm-3 placeholder">
+            <img src="{{$value.a}}" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
+            <h4>Label</h4>
+            <span class="text-muted">Something else</span>
+          </div>
+          {{/each}}
+        </div> -->
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>数据</th>
+                <th>时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+                {{each historydata }}
+              <tr>
+                <td>{{$value.dataname}}</td>
+                <td>{{$value.data}}</td>
+                <td>{{$value.datatime}}</td>
+                <td>
+                    <a href="/historydata/delete?id={{$value.id}}">删除</a>
+                  </td>
+              </tr>           
+              {{/each}}    
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{{/block}}
+
